@@ -53,11 +53,24 @@ var create = function (messagetext, messagewriter) {
 }
 module.exports.create = create;
 
-var findmessagegroups = function (user, next) {
+var findmessagegroups = function (user, foo, next) {
     messagegroups.find({
-        users: user
+        users: {
+            $elemMatch: {
+                email: user.email
+            }
+        }
     }, (err, results) => {
-        next(results);
+        if (err) {
+            foo({
+                success: false,
+                message: 'finding message groups operation failed'
+            });
+            return;
+        } else {
+            next(results);
+            return;
+        }
     });
 }
 module.exports.findmessagegroups = findmessagegroups;
@@ -188,6 +201,7 @@ var finduser = function (email, foo, next) {
 }
 module.exports.finduser = finduser;
 
-var findgroups = function (user) {
+var findgroups = function (user, foo, next) {
     messagegroups.find({});
 }
+module.exports.findgroups = findgroups;

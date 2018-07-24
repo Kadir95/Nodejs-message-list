@@ -134,5 +134,25 @@ messageRouter.post('/sendmsg', (req, res) => {
 });
 
 messageRouter.get('/get', (req, res) => {
-    
+    messageops.finduser(req.decoded.email, (json) => {
+        res.json(json);
+    }, (user) => {
+        messageops.findmessagegroups(user, (json) => {
+            res.json(json);
+        }, (groups) => {
+            response = [];
+            for (var i = 0; i < groups.length; i++) {
+                response.push({
+                    groupName: groups[i].groupName,
+                    id: groups[i]._id,
+                    messages: groups[i].messages
+                });
+            }
+            res.json({
+                success: true,
+                message: 'all messages and groups are in result',
+                result: response
+            });
+        });
+    });
 });
